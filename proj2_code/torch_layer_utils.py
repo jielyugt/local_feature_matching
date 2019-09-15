@@ -96,8 +96,8 @@ def get_sobel_xy_parameters() -> torch.nn.Parameter:
     ############################
     ### TODO: YOUR CODE HERE ###
 
-    raise NotImplementedError('`get_sobel_xy_parameters` need to be '
-        + 'implemented')
+    one_d_kernel = np.asarray([-1,0,1,-2,0,2,-1,0,1] * 2)
+    kernel = one_d_kernel.reshape(2,1,3,3)
 
     ### END OF STUDENT CODE ####
     ############################
