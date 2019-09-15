@@ -95,9 +95,9 @@ def get_sobel_xy_parameters() -> torch.nn.Parameter:
 
     ############################
     ### TODO: YOUR CODE HERE ###
-
-    one_d_kernel = np.asarray([-1,0,1,-2,0,2,-1,0,1] * 2)
-    kernel = one_d_kernel.reshape(2,1,3,3)
+    
+    one_d_kernel = np.asarray([-1,0,1,-2,0,2,-1,0,1,-1,-2,-1,0,0,0,1,2,1])
+    kernel = nn.Parameter(torch.Tensor(one_d_kernel.reshape(2,1,3,3)))
 
     ### END OF STUDENT CODE ####
     ############################
