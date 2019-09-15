@@ -246,7 +246,7 @@ class CornerResponseLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`CornerResponseLayer` needs to be ''
+        raise NotImplementedError('`CornerResponseLayer` needs to be '
             + 'implemented')
 
         #######################################################################
@@ -311,7 +311,7 @@ class NMSLayer(torch.nn.Module):
 def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Function to return top most N x,y points with the highest confident corner
-    score. Note that the return type should be a Numpy array. Also make sure to
+    score. Note that the return type should be a tensor. Also make sure to
     sort them in order of confidence!
 
     (Potentially) useful functions: torch.nonzero, torch.masked_select,
@@ -343,7 +343,7 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_interest_points` in `HarrisNet.py needs `
+    raise NotImplementedError('`get_interest_points` in `HarrisNet.py` needs '
         + 'be implemented')
 
     # This dummy code will compute random score for each pixel, you can
