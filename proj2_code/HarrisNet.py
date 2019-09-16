@@ -268,14 +268,17 @@ class CornerResponseLayer(torch.nn.Module):
 
         # (num_image, 3, height, width) for S_xx, S_yy and S_xy
 
-        output = torch.zeros((x.shape[0], 1, x.shape[2], x.shape[3]))
+        #output = torch.zeros((x.shape[0], 1, x.shape[2], x.shape[3]))
 
-        for image_index in range(x.shape[0]):
-            # det = S_xx * S_yy - S_xy^2
-            det = torch.mul(x[image_index][0], x[image_index][1]) - torch.mul(x[image_index][2], x[image_index][2])
-            trace = x[image_index][0] + x[image_index][1]
-            r = det - self.alpha * torch.mul(trace, trace)
-            output[image_index][0] = r
+        # det = S_xx * S_yy - S_xy^2
+
+        Sxx = x[:,0,:,:]
+        Syy = x[:,1,:,:]
+        Sxy = x[:,2,:,:]
+
+        det = torch.mul(Sxx, Syy) - torch.mul(Sxy, Sxy)
+        trace = Sxx + Syy
+        output = det - self.alpha * torch.mul(trace, trace)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -326,8 +329,8 @@ class NMSLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        zeros = torch.zeros(x.shape[0], x.shape[1], x.shape[2], x.shape[3])
-        ones = torch.ones(x.shape[0], x.shape[1], x.shape[2], x.shape[3])
+        zeros = torch.zeros(x.shape)
+        ones = torch.ones(x.shape)
         median = torch.median(x)
 
         # thresholding
@@ -339,7 +342,7 @@ class NMSLayer(torch.nn.Module):
 
         # binarizing
         max_val = torch.gather(torch.flatten(thresholded), 0, torch.flatten(max_indices))
-        max_val = torch.reshape(max_val, (x.shape[0], x.shape[1], x.shape[2], x.shape[3]))
+        max_val = torch.reshape(max_val, x.shape)
         binarized = torch.where(thresholded == max_val, ones, zeros)
 
         output = torch.mul(binarized, x)
