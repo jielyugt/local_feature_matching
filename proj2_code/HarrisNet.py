@@ -75,10 +75,18 @@ class HarrisNet(nn.Module):
         #######################################################################
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
+        channel_product_layer = ChannelProductLayer()
+        second_moment_matrix_layer = SecondMomentMatrixLayer()
+        corner_response_layer = CornerResponseLayer()
+        nml_layer = NMSLayer()
 
-        raise NotImplementedError('`HarrisNet.__init__` function in '
-             + '`HarrisNet.py` needs to be implemented')
-        self.net = None # <--replace this with your implementation
+        self.net = nn.Sequential(   
+                                    image_gradients_layer, 
+                                    channel_product_layer, 
+                                    second_moment_matrix_layer, 
+                                    corner_response_layer, 
+                                    nml_layer
+                                )
 
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -136,15 +144,15 @@ class ChannelProductLayer(torch.nn.Module):
         # input (num_image,2,width,height) and output (num_image,3,width,height)
         # we can assume num_image to be 1 for this project
 
-        output = torch.zeros((x.shape[0], 3, x.shape[2], x.shape[3]))
+        Ix = x[:,0,:,:]
+        Iy = x[:,1,:,:]
 
-        for image_index in range(x.shape[0]):
-            Ixx = torch.mul(x[image_index][0], x[image_index][0])
-            Iyy = torch.mul(x[image_index][1], x[image_index][1])
-            Ixy = torch.mul(x[image_index][0], x[image_index][1])
-            output[image_index][0] = Ixx
-            output[image_index][1] = Iyy
-            output[image_index][2] = Ixy
+        Ixx = torch.mul(Ix, Ix)
+        Iyy = torch.mul(Iy, Iy)
+        Ixy = torch.mul(Ix, Iy)
+
+        # direction 1 because we don't want a 3 * 1 * 3 * 3 tensor
+        output = torch.stack((Ixx,Iyy,Ixy), 1)
             
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -283,6 +291,9 @@ class CornerResponseLayer(torch.nn.Module):
         trace = Sxx + Syy
         output = det - self.alpha * torch.mul(trace, trace)
 
+        # since we shrinked the channels dim, we need to add a 1d to it
+        output = torch.unsqueeze(output, 1)
+
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -349,6 +360,9 @@ class NMSLayer(torch.nn.Module):
         binarized = torch.where(thresholded == max_val, ones, zeros)
 
         output = torch.mul(binarized, x)
+
+        print("+++++++++++++++++++\n\n\n")
+        print(output.shape)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
