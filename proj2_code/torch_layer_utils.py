@@ -67,10 +67,17 @@ def get_gaussian_kernel(ksize=7, sigma=5) -> torch.nn.Parameter:
     """
 
     ############################
-    ### TODO: YOUR CODE HERE ###
+    ### TODO: YOUR CODE HERE ###    
 
-    raise NotImplementedError('`get_gaussian_kernel` need to be '
-        + 'implemented')
+    def gaussian(x):
+        return np.exp(-np.power((x - mean) / sigma, 2) / 2) / (np.sqrt(2 * np.pi) * sigma)
+  
+    mean = np.floor(ksize / 2)
+
+    one_d_gaussian = np.fromfunction(gaussian, (ksize,))
+    two_d_np_kernel = np.outer(one_d_gaussian, one_d_gaussian)
+    kernel = torch.Tensor(two_d_np_kernel)
+    kernel /= torch.sum(kernel)
 
     ### END OF STUDENT CODE ####
     ############################

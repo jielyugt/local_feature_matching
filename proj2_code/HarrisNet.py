@@ -133,9 +133,19 @@ class ChannelProductLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`ChannelProductLayer` need to be '
-            + 'implemented')
+        # input (num_image,2,width,height) and output (num_image,3,width,height)
+        # we can assume num_image to be 1 for this project
 
+        output = torch.zeros((x.shape[0], 3, x.shape[2], x.shape[3]))
+
+        for image_index in range(x.shape[0]):
+            Ixx = torch.mul(x[image_index][0], x[image_index][0])
+            Iyy = torch.mul(x[image_index][1], x[image_index][1])
+            Ixy = torch.mul(x[image_index][0], x[image_index][1])
+            output[image_index][0] = Ixx
+            output[image_index][1] = Iyy
+            output[image_index][2] = Ixy
+            
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -171,8 +181,19 @@ class SecondMomentMatrixLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`SecondMomentMatrixLayer` need to be '
-            + 'implemented')
+        # this part is really confusing, need to research more into torch.nn.Conv2d()
+
+        # reshape the kernel
+        raw_np_kenel = get_gaussian_kernel(self.ksize, self.sigma)
+        flat = raw_np_kenel.reshape(ksize * ksize)
+        kernel = torch.cat((flat, flat, flat), 0).reshape(3, 1, ksize, ksize)
+        self.kernel = nn.Parameter(kernel)
+
+        self.conv2d = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=ksize,
+            bias=False, padding=(ksize//2,ksize//2), groups = 3)
+        
+        self.conv2d.weight = self.kernel
+
 
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -199,8 +220,7 @@ class SecondMomentMatrixLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`SecondMomentMatrixLayer` needs to be '
-            + 'implemented')
+        output = self.conv2d(x)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -246,8 +266,16 @@ class CornerResponseLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`CornerResponseLayer` needs to be '
-            + 'implemented')
+        # (num_image, 3, height, width) for S_xx, S_yy and S_xy
+
+        output = torch.zeros((x.shape[0], 1, x.shape[2], x.shape[3]))
+
+        for image_index in range(x.shape[0]):
+            # det = S_xx * S_yy - S_xy^2
+            det = torch.mul(x[image_index][0], x[image_index][1]) - torch.mul(x[image_index][2], x[image_index][2])
+            trace = x[image_index][0] + x[image_index][1]
+            r = det - self.alpha * torch.mul(trace, trace)
+            output[image_index][0] = r
 
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -298,8 +326,23 @@ class NMSLayer(torch.nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`NMSLayer` needs to be implemented')
+        zeros = torch.zeros(x.shape[0], x.shape[1], x.shape[2], x.shape[3])
+        ones = torch.ones(x.shape[0], x.shape[1], x.shape[2], x.shape[3])
+        median = torch.median(x)
 
+        # thresholding
+        thresholded = torch.where(x < median, zeros, x)
+
+        # maxpooling
+        max_pool = nn.MaxPool2d((7,7), padding = 3, stride = 1, return_indices = True)
+        pooled, max_indices = max_pool(thresholded)
+
+        # binarizing
+        max_val = torch.gather(torch.flatten(thresholded), 0, torch.flatten(max_indices))
+        max_val = torch.reshape(max_val, (x.shape[0], x.shape[1], x.shape[2], x.shape[3]))
+        binarized = torch.where(thresholded == max_val, ones, zeros)
+
+        output = torch.mul(binarized, x)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
