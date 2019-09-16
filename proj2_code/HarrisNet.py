@@ -185,15 +185,18 @@ class SecondMomentMatrixLayer(torch.nn.Module):
 
         # reshape the kernel
         raw_np_kenel = get_gaussian_kernel(self.ksize, self.sigma)
-        flat = raw_np_kenel.reshape(ksize * ksize)
-        kernel = torch.cat((flat, flat, flat), 0).reshape(3, 1, ksize, ksize)
+        
+        #flat = raw_np_kenel.reshape(ksize * ksize)
+        #kernel = torch.cat((flat, flat, flat), 0).reshape(3, 1, ksize, ksize)
+
+        kernel = torch.stack((raw_np_kenel,raw_np_kenel,raw_np_kenel))
+        kernel = torch.unsqueeze(kernel, 1)
         self.kernel = nn.Parameter(kernel)
 
         self.conv2d = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=ksize,
             bias=False, padding=(ksize//2,ksize//2), groups = 3)
         
         self.conv2d.weight = self.kernel
-
 
         #######################################################################
         #                           END OF YOUR CODE                          #
