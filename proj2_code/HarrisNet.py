@@ -417,12 +417,9 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
     # get the x, y and c
     x, y = torch.nonzero(flatten_R.reshape(R.shape[2:]), as_tuple=True)
     confidences = torch.gather(flatten_R, 0, x * R.shape[3] + y)
-    
-    print(len(x), "points before removing border")
 
-
+    # remove border points
     x, y, confidences = remove_border_vals(R, x, y, confidences)
-    print(len(x), "points after removing border")
     
     ###########################################################################
     #                             END OF YOUR CODE                            #
