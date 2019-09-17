@@ -420,6 +420,9 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
 
     # remove border points
     x, y, confidences = remove_border_vals(R, x, y, confidences)
+
+    # swap x and y
+    x,y = y, x
     
     ###########################################################################
     #                             END OF YOUR CODE                            #
