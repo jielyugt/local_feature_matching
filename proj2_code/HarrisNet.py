@@ -361,9 +361,6 @@ class NMSLayer(torch.nn.Module):
 
         output = torch.mul(binarized, x)
 
-        print("+++++++++++++++++++\n\n\n")
-        print(output.shape)
-
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -406,8 +403,24 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_interest_points` in `HarrisNet.py` needs '
-        + 'be implemented')
+    zeros = torch.zeros(image.shape)
+    ones = torch.ones(image.shape)
+    
+    ranked = torch.argsort(torch.flatten(image)).reshape(image.shape)
+    selected = torch.where(ranked < num_points, ones, zeros)
+    a, b, x, y = torch.nonzero(selected, as_tuple=True)
+    confidences = torch.gather(torch.flatten(image), 0, x * image.shape[2] + y)
+
+    
+
+
+    # remove the border points
+    # output the sliced top N points
+
+
+
+
+
 
     # This dummy code will compute random score for each pixel, you can
     # uncomment this and run the project notebook and see how it detects random
