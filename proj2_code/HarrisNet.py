@@ -403,9 +403,7 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    zeros = torch.zeros(R.shape)
-    ones = torch.ones(R.shape)
-
+    # flatten R to 1D
     flatten_R = torch.flatten(R)
 
     # rank the R and get back indices of their corresponding order of R in assending order
