@@ -403,33 +403,27 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    zeros = torch.zeros(image.shape)
-    ones = torch.ones(image.shape)
+    zeros = torch.zeros(R.shape)
+    ones = torch.ones(R.shape)
+
+    flatten_R = torch.flatten(R)
+
+    # rank the R and get back indices of their corresponding order of R in assending order
+    ranking = torch.argsort(flatten_R)
+
+    # mark all the small Rs with 0
+    flatten_R[ranking[:len(flatten_R) - num_points]] = 0
+
+    # get the x, y and c
+    x, y = torch.nonzero(flatten_R.reshape(R.shape[2:]), as_tuple=True)
+    confidences = torch.gather(flatten_R, 0, x * R.shape[3] + y)
     
-    ranked = torch.argsort(torch.flatten(image)).reshape(image.shape)
-    selected = torch.where(ranked < num_points, ones, zeros)
-    a, b, x, y = torch.nonzero(selected, as_tuple=True)
-    confidences = torch.gather(torch.flatten(image), 0, x * image.shape[2] + y)
+    print(len(x), "points before removing border")
 
+
+    x, y, confidences = remove_border_vals(R, x, y, confidences)
+    print(len(x), "points after removing border")
     
-
-
-    # remove the border points
-    # output the sliced top N points
-
-
-
-
-
-
-    # This dummy code will compute random score for each pixel, you can
-    # uncomment this and run the project notebook and see how it detects random
-    # points.
-    # x = torch.randint(0,image.shape[3],(num_points,))
-    # y = torch.randint(0,image.shape[2],(num_points,))
-
-    # confidences = torch.arange(num_points,0,-1)
-
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -458,8 +452,19 @@ def remove_border_vals(img, x: torch.Tensor, y: torch.Tensor, c: torch.Tensor) -
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`remove_border_vals` in `HarrisNet.py` needs '
-        + 'to be implemented')
+    output = []
+
+    height = img.shape[2]
+    width = img.shape[3]
+
+    for i in range(len(x)):
+        if x[i] > 8 and x[i] < height - 8 and y[i] > 8 and y[i] < width - 8:
+            output.append(i)
+    
+    output = torch.Tensor(output).long()
+    x = torch.gather(x, 0, output)
+    y = torch.gather(y, 0, output)
+    c = torch.gather(c, 0, output)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
