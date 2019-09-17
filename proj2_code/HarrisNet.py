@@ -351,14 +351,13 @@ class NMSLayer(torch.nn.Module):
         thresholded = torch.where(x < median, zeros, x)
 
         # maxpooling
-        max_pool = nn.MaxPool2d((7,7), padding = 3, stride = 1, return_indices = True)
-        pooled, max_indices = max_pool(thresholded)
+        max_pool = nn.MaxPool2d((7,7), padding = 3, stride = 1)
+        pooled = max_pool(thresholded)
 
         # binarizing
-        max_val = torch.gather(torch.flatten(thresholded), 0, torch.flatten(max_indices))
-        max_val = torch.reshape(max_val, x.shape)
-        binarized = torch.where(thresholded == max_val, ones, zeros)
-
+        binarized = torch.where(x == pooled, ones, zeros)
+        # if we want to keep pixels of 0 R's to be marked one, we can do the following
+        # binarized = torch.where(thresholded == pooled, ones, zeros)
         output = torch.mul(binarized, x)
 
         #######################################################################
