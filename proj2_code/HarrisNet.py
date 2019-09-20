@@ -418,6 +418,12 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
     # remove border points
     x, y, confidences = remove_border_vals(R, x, y, confidences)
 
+    # final ranking to pass the additional test case
+    ranking = torch.argsort(confidences, descending = True)
+    x = x[ranking]
+    y = y[ranking]
+    confidences = confidences[ranking]
+
     # swap x and y
     x,y = y, x
     
