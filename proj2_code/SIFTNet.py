@@ -201,8 +201,12 @@ def angles_to_vectors_2d_pytorch(angles: torch.Tensor) -> torch.Tensor:
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`angles_to_vectors_2d_pytorch` needs to be '
-      + 'implemented')
+    # pytest unit_tests -k test_angles_to_vectors_2d_pytorch
+
+    coses = torch.cos(angles)
+    sines = torch.sin(angles)
+    
+    angle_vectors = torch.stack((coses,sines),1)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
