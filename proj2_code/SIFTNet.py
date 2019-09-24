@@ -205,7 +205,7 @@ def angles_to_vectors_2d_pytorch(angles: torch.Tensor) -> torch.Tensor:
 
     coses = torch.cos(angles)
     sines = torch.sin(angles)
-    
+
     angle_vectors = torch.stack((coses,sines),1)
 
     ###########################################################################
@@ -239,8 +239,8 @@ class SIFTOrientationLayer(nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`__init__` in `SIFTOrientationLayer` needs '
-          + 'to be implemented')
+        self.layer = nn.Conv2d(in_channels = 2, out_channels = 10, kernel_size = 1, bias = False)
+        self.layer.weight = self.get_orientation_bin_weights()
 
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -268,9 +268,21 @@ class SIFTOrientationLayer(nn.Module):
         #######################################################################
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
+        pi = np.pi
+        angles = torch.tensor([pi*1/8, pi*3/8, pi*5/8, pi*7/8, pi*9/8, pi*11/8, pi*13/8, pi*15/8])
 
-        raise NotImplementedError('`get_orientation_bin_weights` needs to be '
-          + 'implemented')
+        # vectors shoud have a shape of (8,2)
+        vectors = angles_to_vectors_2d_pytorch(angles)
+
+        # unsqueeze it to the shape of (8,2,1,1)
+        vectors = vectors.reshape(8,2,1,1)
+
+        # append Ix and Iy identity masks at the end
+        Ix_mask = torch.tensor([1,0], dtype = torch.float).reshape(1,2,1,1)
+        Iy_mask = torch.tensor([0,1], dtype = torch.float).reshape(1,2,1,1)
+        vectors = torch.cat((vectors, Ix_mask, Iy_mask), 0)
+
+        weight_param = nn.Parameter(vectors)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
