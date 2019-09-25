@@ -124,8 +124,25 @@ class HistogramLayer(nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`HistogramLayer.forward` function in '
-            + '`student_sift.py` needs to be implemented')
+        # pytest unit_tests -k test_HistogramLayer
+
+        # getting the index of the max of each columm
+        max_indeices = torch.argmax(cosines, dim = 1)
+        max_indeices = torch.flatten(max_indeices)
+
+        # making a mask that has 1 at max indices
+        binray_mask = torch.zeros_like(cosines)
+        batches = torch.zeros(cosines.shape[0], dtype = torch.long)
+
+        x_axis = torch.arange(cosines.shape[2])
+        y_axis = torch.arange(cosines.shape[3])
+        grid_x, grid_y = torch.meshgrid(x_axis, y_axis)
+        
+        binray_mask[batches, max_indeices, torch.flatten(grid_x), torch.flatten(grid_y)] = 1
+
+        # normalizing the masked cosines tensor
+        norm = torch.norm(im_grads, dim = 1)
+        per_px_histogram = torch.mul(binray_mask, norm)
 
         #######################################################################
         #                           END OF YOUR CODE                          #
