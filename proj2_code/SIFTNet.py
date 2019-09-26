@@ -342,9 +342,17 @@ class SIFTNet(nn.Module):
         #######################################################################
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
+        image_gradients_layer = ImageGradientsLayer()
+        sift_orientation_layer = SIFTOrientationLayer()
+        histogram_layer = HistogramLayer()
+        subgrid_accmulation_layer = SubGridAccumulationLayer()
 
-        raise NotImplementedError('`__init__` in `SIFTNet` needs to be '
-          + 'implemented')
+        self.net = nn.Sequential(
+                                    image_gradients_layer, 
+                                    sift_orientation_layer,
+                                    histogram_layer,
+                                    subgrid_accmulation_layer
+                                )
 
         #######################################################################
         #                           END OF YOUR CODE                          #
