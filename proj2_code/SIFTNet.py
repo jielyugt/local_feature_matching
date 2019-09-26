@@ -386,8 +386,10 @@ def get_sift_subgrid_coords(x_center: int, y_center: int):
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_sift_subgrid_coords` needs to be '
-      + 'implemented')
+    x_temp = np.asarray(range(x_center-6, x_center + 7, 4))
+    x_grid = np.tile(x_temp, 4)
+    y_temp = np.asarray(range(y_center-6, y_center + 7, 4))
+    y_grid = (np.stack((y_temp, y_temp, y_temp, y_temp), 1)).flatten()
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
