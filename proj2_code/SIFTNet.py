@@ -181,8 +181,8 @@ class SubGridAccumulationLayer(nn.Module):
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
 
-        raise NotImplementedError('`__init__ in `SubGridAccumulationLayer` '
-          + 'needs to be implemented')
+        self.layer = nn.Conv2d(in_channels = 8, out_channels = 8, stride = 1, padding = 2, kernel_size = 4, groups = 8, bias = False)
+        self.layer.weight = nn.Parameter(torch.ones(8,1,4,4))
 
         #######################################################################
         #                           END OF YOUR CODE                          #
