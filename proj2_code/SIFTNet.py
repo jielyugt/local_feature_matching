@@ -144,6 +144,7 @@ class HistogramLayer(nn.Module):
         norm = torch.norm(im_grads, dim = 1)
         per_px_histogram = torch.mul(binray_mask, norm)
 
+
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -285,6 +286,7 @@ class SIFTOrientationLayer(nn.Module):
         #######################################################################
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
+
         pi = np.pi
         angles = torch.tensor([pi*1/8, pi*3/8, pi*5/8, pi*7/8, pi*9/8, pi*11/8, pi*13/8, pi*15/8])
 

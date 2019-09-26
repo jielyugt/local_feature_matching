@@ -67,7 +67,7 @@ def get_gaussian_kernel(ksize=7, sigma=5) -> torch.nn.Parameter:
     """
 
     ############################
-    ### TODO: YOUR CODE HERE ###    
+    ### TODO: YOUR CODE HERE ###
 
     def gaussian(x):
         return np.exp(-np.power((x - mean) / sigma, 2) / 2) / (np.sqrt(2 * np.pi) * sigma)
@@ -102,7 +102,7 @@ def get_sobel_xy_parameters() -> torch.nn.Parameter:
 
     ############################
     ### TODO: YOUR CODE HERE ###
-    
+
     one_d_kernel = np.asarray([-1,0,1,-2,0,2,-1,0,1,-1,-2,-1,0,0,0,1,2,1])
     kernel = nn.Parameter(torch.Tensor(one_d_kernel.reshape(2,1,3,3)))
 

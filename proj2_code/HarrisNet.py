@@ -75,6 +75,7 @@ class HarrisNet(nn.Module):
         #######################################################################
         # TODO: YOUR CODE HERE                                                #
         #######################################################################
+
         channel_product_layer = ChannelProductLayer()
         second_moment_matrix_layer = SecondMomentMatrixLayer()
         corner_response_layer = CornerResponseLayer()
@@ -153,7 +154,7 @@ class ChannelProductLayer(torch.nn.Module):
 
         # direction 1 because we don't want a 3 * 1 * 3 * 3 tensor
         output = torch.stack((Ixx,Iyy,Ixy), 1)
-            
+
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -360,6 +361,7 @@ class NMSLayer(torch.nn.Module):
         # binarized = torch.where(thresholded == pooled, ones, zeros)
         output = torch.mul(binarized, x)
 
+
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -426,7 +428,7 @@ def get_interest_points(image: torch.Tensor, num_points: int = 4500) -> Tuple[to
 
     # swap x and y
     x,y = y, x
-    
+
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
