@@ -20,8 +20,13 @@ def compute_feature_distances(features1, features2):
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`match_features` function in ' +
-        '`student_feature_matching.py` needs to be implemented')
+    # pytest unit_tests/ -k test_compute_dists
+    feat_dim = features1.shape[1]
+    n = features1.shape[0]
+    m = features2.shape[0]
+    tiled_1 = np.tile(features1,m).flatten().reshape(n, m, feat_dim)
+    tiled_2 = np.tile(features2.flatten(), n).reshape(n, m, feat_dim)
+    dists = np.sqrt(np.sum(np.power((tiled_1 - tiled_2),2),axis = 2)).reshape(n,m)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
