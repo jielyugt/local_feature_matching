@@ -73,8 +73,26 @@ def match_features(features1, features2, x1, y1, x2, y2):
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`match_features` function in ' +
-        '`student_feature_matching.py` needs to be implemented')
+    # dists: numpy array of shape (n,m)
+    dists = compute_feature_distances(features1, features2)
+
+    # compute ratios
+    smallest_two_indices = np.argsort(dists, axis = 0)[0,:]
+    samllest_two_c = np.sort(dists, axis = 0)[:2,:]
+    all_confidences = samllest_two_c[0] / samllest_two_c[1]
+
+    # threshold 0.8 in original paper, but tewak it to get 80% on Notre Dame image
+    matches, confidences = [],[]
+    threshold = 0.8
+
+    for index in range(len(all_confidences)):
+      print("hello")
+      if all_confidences[index] < threshold:
+        matches.append([smallest_two_indices[index],index])
+        confidences.append(all_confidences[index])
+    
+    matches = np.asarray(matches)
+    confidences = np.asarray(confidences)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
