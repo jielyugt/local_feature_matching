@@ -434,8 +434,15 @@ def get_siftnet_features(img_bw: torch.Tensor, x: np.ndarray, y: np.ndarray) -> 
     ###########################################################################
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
+    result = net(img_bw)
+    k = x.shape[0]
+    fvs = np.zeros((k,128))
+    for i in range(k):
+        x_grid, y_grid = get_sift_subgrid_coords(x[i],y[i])
+        raw = result[:,:,y_grid,x_grid].detach().numpy().flatten()
+        normalized = raw / np.sqrt(np.sum(np.power(raw,2)))
+        fvs[i,:] = np.power(normalized, 0.9)
 
-    raise NotImplementedError('`get_siftnet_features` needs to be implemented')
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
