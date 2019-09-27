@@ -23,11 +23,11 @@ def compute_feature_distances(features1, features2):
     # pytest unit_tests/ -k test_compute_dists
     # pytest unit_tests/ -k test_feature_matching_speed
 
-    
+
+    """
 
     # fast approach but uses too much memory ( > 8G)
 
-    """
     feat_dim = features1.shape[1]
     n = features1.shape[0]
     m = features2.shape[0]
@@ -37,11 +37,11 @@ def compute_feature_distances(features1, features2):
     diff = (tiled_1 - tiled_2).reshape(m * n,feat_dim)
     dists = np.linalg.norm(diff, axis=1).reshape(n,m)
     #dists = np.sqrt(np.sum(np.power((tiled_1 - tiled_2),2), axis = 2)).reshape(n,m)
-    
-
-    
-
+  
     """
+
+    # slow approach that uses ~50M memory
+
     feat_dim = features1.shape[1]
     n = features1.shape[0]
     m = features2.shape[0]
