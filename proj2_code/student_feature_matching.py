@@ -21,13 +21,38 @@ def compute_feature_distances(features1, features2):
     ###########################################################################
 
     # pytest unit_tests/ -k test_compute_dists
+    # pytest unit_tests/ -k test_feature_matching_speed
+
+    
+
+    # fast approach but uses too much memory ( > 8G)
+
+    """
     feat_dim = features1.shape[1]
     n = features1.shape[0]
     m = features2.shape[0]
-    tiled_1 = np.tile(features1,m).flatten().reshape(n, m, feat_dim)
+    tiled_1 = np.tile(features1,m).reshape(n, m, feat_dim)
     tiled_2 = np.tile(features2.flatten(), n).reshape(n, m, feat_dim)
-    dists = np.sqrt(np.sum(np.power((tiled_1 - tiled_2),2),axis = 2)).reshape(n,m)
 
+    diff = (tiled_1 - tiled_2).reshape(m * n,feat_dim)
+    dists = np.linalg.norm(diff, axis=1).reshape(n,m)
+    #dists = np.sqrt(np.sum(np.power((tiled_1 - tiled_2),2), axis = 2)).reshape(n,m)
+    
+
+    
+
+    """
+    feat_dim = features1.shape[1]
+    n = features1.shape[0]
+    m = features2.shape[0]
+
+    dists = np.zeros((n,m))
+
+    for i in range(n):
+      for j in range(m):
+        dists[i][j] = np.linalg.norm(features1[i] - features2[j])
+    
+    
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -86,7 +111,6 @@ def match_features(features1, features2, x1, y1, x2, y2):
     threshold = 0.8
 
     for index in range(len(all_confidences)):
-      print("hello")
       if all_confidences[index] < threshold:
         matches.append([smallest_two_indices[index],index])
         confidences.append(all_confidences[index])
